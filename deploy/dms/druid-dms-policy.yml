@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Druid Glue Policy
+
+Parameters:
+  OutputName:
+    Type: String
+    Description: Application name. Used to populate role descriptions.
+
+Resources:
+  Policy:
+      Type: 'AWS::IAM::ManagedPolicy'
+      Properties:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: DMSAccess
+              Effect: Allow
+              Action:
+                - dms:*
+              Resource: "*"
+            - Sid: DMSKeys
+              Effect: Allow
+              Action:
+                - kms:ListAliases
+                - kms:DescribeKey
+              Resource: "*"
+            - Sid: DMSiam
+              Effect: Allow
+              Action:
+                - iam:GetRole
+                - iam:PassRole
+                - iam:CreateRole
+                - iam:AttachRolePolicy
+              Resource: "*"
+            - Sid: DMSec2
+              Effect: Allow
+              Action:
+                - ec2:DescribeVpcs
+                - ec2:DescribeInternetGateways
+                - ec2:DescribeAvailabilityZones
+                - ec2:DescribeSubnets
+                - ec2:DescribeSecurityGroups
+                - ec2:ModifyNetworkInterfaceAttributes
+                - ec2:CreateNetworkInterface
+                - ec2:DeleteNetworkInterface
+              Resource: "*"
+            - Sid: dmsCloud
+              Effect: Allow
+              Action:
+                - cloudwatch:Get*
+                - cloudwatch:List*
+              Resource: "*"
+            - Sid: dmsLogs
+              Effect: Allow
+              Action:
+                - logs:DescribeLogGroups
+                - logs:DescribeLogStreams
+                - logs:FilterLogEvents
+                - logs:GetLogEvents
+              Resource: "*"
+            - Sid: redshift
+              Effect: Allow
+              Action:
+                - redshift:Describe*
+                - redshift:ModifyClusterIamRoles
+              Resource: "*"
+            - Sid: ViewOwnUserInfo
+              Effect: Allow
+              Action:
+                - iam:GetUserPolicy
+                - iam:ListGroupsForUser
+                - iam:ListAttachedUserPolicies
+                - iam:ListUserPolicies
+                - iam:GetUser
+              Resource: "*"
+            - Sid: NavigateInConsole
+              Effect: Allow
+              Action:
+                - iam:GetGroupPolicy
+                - iam:GetPolicyVersion
+                - iam:GetPolicy
+                - iam:ListAttachedGroupPolicies
+                - iam:ListGroupPolicies
+                - iam:ListPolicyVersions
+                - iam:ListPolicies
+                - iam:ListUsers
+              Resource: "*"
+            - Sid: dmsS3
+              Effect: Allow
+              Action:
+                - s3:CreateBucket
+                - s3:ListBucket
+                - s3:DeleteBucket
+                - s3:GetBucketLocation
+                - s3:GetObject
+                - s3:PutObject
+                - s3:DeleteObject
+                - s3:GetObjectVersion
+                - s3:GetBucketPolicy
+                - s3:PutBucketPolicy
+                - s3:GetBucketAcl
+                - s3:PutBucketVersioning
+                - s3:GetBucketVersioning
+                - s3:PutLifecycleConfiguration
+                - s3:GetLifecycleConfiguration
+                - s3:DeleteBucketPolicy
+              Resource: "*"
+
+Outputs:
+  ExportPolicy:
+    Value: !Ref Policy
+    Export:
+      Name: !Sub ${OutputName}

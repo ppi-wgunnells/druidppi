@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Druid Glue Policy
+
+Parameters:
+  OutputName:
+    Type: String
+    Description: Application name. Used to populate role descriptions.
+
+Resources:
+  Policy:
+      Type: 'AWS::IAM::ManagedPolicy'
+      Properties:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: VisualEditorAthena1
+              Effect: Allow
+              Action:
+                - glue:GetDatabase
+                - glue:GetPartition
+                - glue:GetConnections
+                - glue:GetTableVersion
+                - glue:GetConnection
+                - glue:GetTables
+                - glue:GetTableVersions
+                - glue:GetPartitions
+                - glue:GetDatabases
+                - glue:GetTable
+                - glue:GetJob
+                - glue:CreateTable
+                - glue:BatchGetPartition
+                - glue:BatchCreatePartition
+              Resource:
+                - arn:aws:glue:*:492436075634:catalog
+#                - arn:aws:glue:*:492436075634:database/druid-admin
+#                - arn:aws:glue:*:492436075634:table/druid-admin/*
+#                - arn:aws:glue:*:492436075634:tableVersion/druid-admin/*
+                - arn:aws:glue:*:492436075634:job
+                - arn:aws:glue:*:133994924360756349959307:job/*
+            - Sid: jobui
+              Effect: Allow
+              Action:
+                - glue:*
+              Resource:
+                - arn:aws:glue:*:492436075634:job
+                - arn:aws:glue:*:492436075634:job/*
+              Condition:
+                StringLike:
+                  'glue:prefix':
+                    - "admin"
+            - Sid: dbadmin
+              Effect: Allow
+              Action:
+                - rds:ModifyDBCluster
+              Resource:
+                - arn:aws:rds:us-west-2:492436075634:cluster:consortium-aurora-dev
+
+Outputs:
+  ExportPolicy:
+    Value: !Ref Policy
+    Export:
+      Name: !Sub ${OutputName}

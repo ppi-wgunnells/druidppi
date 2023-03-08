@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Roles
+
+Parameters:
+  AppName:
+    Type: String
+    Description: Application name. Used to populate role descriptions.
+    Default: Druid
+  OutputName:
+    Type: String
+    Description: Application name. Used to populate role descriptions.
+  DruidAdminSTSPolicy:
+    Type: String
+    Description: STS Policy Name
+  DruidS3Policy:
+    Type: String
+    Description: System and Analyst need access to same s3
+  DruidGluePolicy:
+    Type: String
+    Description: sys analyst glue and db table
+  DruidAdminGluePolicy:
+    Type: String
+    Description: System and Analyst need access to same glue Policy to write to db/table
+  DruidBaseSettings:
+    Type: String
+    Description: Glue studio and a few other things
+#  DruidAthenaPolicy:
+#    Type: String
+
+
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: !Sub Custom Role Athena  ${AppName}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        - !Ref DruidAdminSTSPolicy
+        - !Ref DruidS3Policy
+        - !Ref DruidAdminGluePolicy
+        - !Ref DruidBaseSettings
+        - !Ref DruidGluePolicy
+#        - !Ref DruidAthenaPolicy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                  - athena.amazonaws.com
+                  - sqs.amazonaws.com
+                  - s3.amazonaws.com
+                  - glue.amazonaws.com
+                  - ec2.amazonaws.com
+                  - rds.amazonaws.com
+                  - sns.amazonaws.com
+                  - lambda.amazonaws.com
+              AWS: # sets up proper links
+                  - arn:aws:iam::492436075634:root
+                  - arn:aws:iam::492436075634:user/wgunnells@pointpredictive.com
+            Action:
+              - sts:AssumeRole
+
+  DruidInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref Role
+
+Outputs:
+  DruidInstanceProfile:
+    Description: The name of the instance profile containing the default instance role
+    Value: !Ref DruidInstanceProfile
+    Export:
+      Name: !Sub ${AWS::StackName}
+
+

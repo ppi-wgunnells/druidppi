@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Roles
+
+Parameters:
+  AppName:
+    Type: String
+    Default: Druid
+  OutputName:
+    Type: String
+
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: !Sub Custom Role Studio Acccess  ${AppName}
+#      PermissionsBoundary: !Sub arn:aws:iam::${AWS::AccountId}:policy/ais-permissions-boundaries
+      ManagedPolicyArns:
+#        - !Sub arn:aws:iam::${AWS::AccountId}:policy/AISSystemLogsPolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                  - glue.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  DruidInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref Role
+
+Outputs:
+  DruidInstanceProfile:
+    Description: The name of the instance profile containing the default instance role
+    Value: !Ref DruidInstanceProfile
+    Export:
+      Name: !Sub ${AWS::StackName}
+
+
