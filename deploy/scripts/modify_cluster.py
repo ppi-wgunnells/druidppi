@@ -33,7 +33,7 @@ def modify_cluster(identifier):
 
 
 if __name__ == "__main__":
-    # print(modify_cluster('consortium-aurora-dev'))  # complete
-    # print(modify_cluster('cms-prod-cluster-cluster'))
-    # print(modify_cluster('consortium-aurora-prod'))
+    # ### print(modify_cluster('consortium-aurora-dev'))  # complete
+    # ### print(modify_cluster('cms-prod-cluster-cluster'))  # complete
+    # ### print(modify_cluster('consortium-aurora-prod'))  # complete
     pass

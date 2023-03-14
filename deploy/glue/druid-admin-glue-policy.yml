@@ -55,7 +55,7 @@ Resources:
               Resource:
                 - arn:aws:rds:us-west-2:492436075634:cluster:consortium-aurora-dev
                 - arn:aws:rds:us-west-2:492436075634:cluster:cms-prod-cluster-cluster
-                - arn:aws:rds:us-west-2:492436075634:db:consortium-aurora-prod-rti
+                - arn:aws:rds:us-west-2:492436075634:cluster:consortium-aurora-prod
 
 Outputs:
   ExportPolicy:
